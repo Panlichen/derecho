@@ -109,6 +109,7 @@ int main(int argc, char* argv[]) {
                                                    persistent::version_t ver) mutable {
         // Count the total number of messages delivered
         ++num_delivered;
+        dbg_default_warn("{}(total: {}) messages delivered", num_delivered, total_num_messages);
         // Check for completion
         if(num_delivered == total_num_messages) {
             done = true;
@@ -142,7 +143,10 @@ int main(int argc, char* argv[]) {
         for(uint i = 0; i < num_messages; ++i) {
             // the lambda function writes the message contents into the provided memory buffer
             // in this case, we do not touch the memory region
-            raw_subgroup.send(max_msg_size, [](char* buf) {});
+            size_t curr_size = rand() % max_msg_size;
+            if(curr_size == 0)
+                dbg_default_info("{} message sent with size {}", i, curr_size);
+            raw_subgroup.send(curr_size, [](char* buf) {});
         }
     };
 
